@@ -1,0 +1,77 @@
+$primary-bg-light: rgb(240 240 240);
+$text-color-light: rgb(51 51 51);
+$button-bg-light: rgb(203 203 203);
+$dpad-button-bg-light: rgb(51 51 51);
+$dpad-button-text-light: rgb(240 240 240);
+$dpad-button-hover-bg-light: rgb(224 224 224);
+$dpad-button-active-bg-light: rgb(208 208 208);
+$swipe-pad-bg-light: rgb(224 224 224);
+
+$primary-bg-dark: rgb(51 51 51);
+$text-color-dark: rgb(224 224 224);
+$button-bg-dark: rgb(64 64 64);
+$dpad-button-bg-dark: rgb(208 208 208);
+$dpad-button-text-dark: rgb(51 51 51);
+$dpad-button-hover-bg-dark: rgb(64 64 64);
+$dpad-button-active-bg-dark: rgb(80 80 80);
+$swipe-pad-bg-dark: rgb(64 64 64);
+
+:root {
+  --primary-bg: #{$primary-bg-light};
+  --text-color: #{$text-color-light};
+  --button-bg: #{$button-bg-light};
+  --dpad-button-bg: #{$dpad-button-bg-light};
+  --dpad-button-text: #{$dpad-button-text-light};
+  --dpad-button-hover-bg: #{$dpad-button-hover-bg-light};
+  --dpad-button-active-bg: #{$dpad-button-active-bg-light};
+  --swipe-pad-bg: #{$swipe-pad-bg-light};
+}
+
+[data-theme="dark"] {
+  --primary-bg: #{$primary-bg-dark};
+  --text-color: #{$text-color-dark};
+  --button-bg: #{$button-bg-dark};
+  --dpad-button-bg: #{$dpad-button-bg-dark};
+  --dpad-button-text: #{$dpad-button-text-dark};
+  --dpad-button-hover-bg: #{$dpad-button-hover-bg-dark};
+  --dpad-button-active-bg: #{$dpad-button-active-bg-dark};
+  --swipe-pad-bg: #{$swipe-pad-bg-dark};
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+canvas {
+  background-color: transparent;
+  opacity: 1;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  outline: inherit;
+  padding: 0;
+}
+
+button:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
