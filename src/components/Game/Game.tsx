@@ -20,7 +20,7 @@ import useTelegramCheck from "@/hooks/useTelegramCheck";
 const SEMI_STEPS = 5;
 const FIELD_DIMENSION = 2 * SEMI_STEPS + 1;
 const TIME = 200;
-
+const baseUrl = "https://snake4d.netlify.app";
 const keyMap: { [key: string]: Direction } = {
   w: { axis: "y", delta: 1 },
   s: { axis: "y", delta: -1 },
@@ -131,8 +131,7 @@ const Game = (): JSX.Element => {
       const arrayBuffer = await response.arrayBuffer();
       return await audioContext.current!.decodeAudioData(arrayBuffer);
     };
-
-    loadSound("/assets/eating.mp3").then((buffer) => {
+    loadSound(`${baseUrl}/assets/eating.mp3`).then((buffer) => {
       eatingAudioBuffer.current = buffer;
     });
 

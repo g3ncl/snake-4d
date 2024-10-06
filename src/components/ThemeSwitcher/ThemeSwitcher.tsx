@@ -4,6 +4,8 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Laptop } from "lucide-react";
 import styles from "./styles/styles.module.scss";
 
+const baseUrl = "https://snake4d.netlify.app";
+
 const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
@@ -25,8 +27,8 @@ const ThemeSwitcher = () => {
       };
 
       Promise.all([
-        loadSound("/assets/switch-on.mp3"),
-        loadSound("/assets/switch-off.mp3"),
+        loadSound(`${baseUrl}/assets/switch-on.mp3`),
+        loadSound(`${baseUrl}/assets/switch-off.mp3`),
       ]).then(([onBuffer, offBuffer]) => {
         lightOnBuffer.current = onBuffer;
         lightOffBuffer.current = offBuffer;
