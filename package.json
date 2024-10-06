@@ -53,11 +53,11 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
-      "eslint",
+      "eslint --fix",
       "prettier --write"
     ],
     "**/*.{css,scss,sass}": [
-      "stylelint"
+      "stylelint --fix"
     ]
   },
   "pre-commit": [
