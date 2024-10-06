@@ -63,7 +63,8 @@ const Game = (): JSX.Element => {
   const highScoreRef = useRef(highScore);
   const scoreRef = useRef(score);
 
-  const eatingSound = useRef<HTMLAudioElement | null>(null);
+  const audioContext = useRef<AudioContext | null>(null);
+  const eatingAudioBuffer = useRef<AudioBuffer | null>(null);
 
   const { isFromTelegram, telegramUserId, telegramMessageId } =
     useTelegramCheck();
@@ -104,6 +105,15 @@ const Game = (): JSX.Element => {
     }, TIME);
   };
 
+  const playSound = (buffer: AudioBuffer | null) => {
+    if (audioContext.current && buffer) {
+      const source = audioContext.current.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.current.destination);
+      source.start();
+    }
+  };
+
   useEffect(() => {
     directionRef.current = direction;
   }, [direction]);
@@ -113,7 +123,24 @@ const Game = (): JSX.Element => {
     // The game component is initially rendered without isMobile beeing initialized,
     // which triggers the hydration error.
     setIsMounted(true);
-    eatingSound.current = new Audio("/assets/eating.mp3");
+    audioContext.current = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
+
+    const loadSound = async (url: string) => {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      return await audioContext.current!.decodeAudioData(arrayBuffer);
+    };
+
+    loadSound("/assets/eating.mp3").then((buffer) => {
+      eatingAudioBuffer.current = buffer;
+    });
+
+    return () => {
+      if (audioContext.current) {
+        audioContext.current.close();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -130,8 +157,7 @@ const Game = (): JSX.Element => {
     ) {
       setScore((prev) => prev + 1);
       scoreRef.current += 1;
-      eatingSound.current?.play();
-
+      playSound(eatingAudioBuffer.current);
       let pos = snakePositionRef.current;
       pos.push(
         updateSnakeBlockPosition(
@@ -171,6 +197,7 @@ const Game = (): JSX.Element => {
       }
     }
     intervalRef.current && clearInterval(intervalRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameOver]);
 
   useEffect(() => {

@@ -1,50 +1,74 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Laptop } from "lucide-react";
 import styles from "./styles/styles.module.scss";
 
-const ThemeSwitcher = (): JSX.Element => {
+const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
-  var lightOnSound: HTMLAudioElement | undefined = undefined;
-  var lightOffSound: HTMLAudioElement | undefined = undefined;
-
-  if (typeof window !== "undefined") {
-    lightOnSound = new Audio("/assets/switch-on.mp3");
-    lightOffSound = new Audio("/assets/switch-off.mp3");
-  }
+  const audioContext = useRef<AudioContext | null>(null);
+  const lightOnBuffer = useRef<AudioBuffer | null>(null);
+  const lightOffBuffer = useRef<AudioBuffer | null>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    if (typeof window !== "undefined") {
+      audioContext.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+
+      const loadSound = async (url: string) => {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        return await audioContext.current!.decodeAudioData(arrayBuffer);
+      };
+
+      Promise.all([
+        loadSound("/assets/switch-on.mp3"),
+        loadSound("/assets/switch-off.mp3"),
+      ]).then(([onBuffer, offBuffer]) => {
+        lightOnBuffer.current = onBuffer;
+        lightOffBuffer.current = offBuffer;
+      });
+    }
+
+    return () => {
+      if (audioContext.current) {
+        audioContext.current.close();
+      }
+    };
   }, []);
+
+  const playSound = (buffer: AudioBuffer | null) => {
+    if (audioContext.current && buffer) {
+      const source = audioContext.current.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.current.destination);
+      source.start();
+    }
+  };
 
   const cycleTheme = (): void => {
     if (theme && systemTheme) {
       const nextTheme =
         theme === "dark" ? "light" : theme === "light" ? "system" : "dark";
-
       const getEffectiveTheme = (theme: string, systemTheme: string) => {
-        if (theme === "system") {
-          return systemTheme;
-        }
-        return theme;
+        return theme === "system" ? systemTheme : theme;
       };
-
       const currentEffectiveTheme = getEffectiveTheme(theme, systemTheme);
       const nextEffectiveTheme = getEffectiveTheme(nextTheme, systemTheme);
-
       const isNextThemeDark = nextEffectiveTheme === "dark";
-      const soundToPlay = isNextThemeDark ? lightOffSound : lightOnSound;
 
       if (currentEffectiveTheme !== nextEffectiveTheme) {
-        soundToPlay?.play();
+        playSound(
+          isNextThemeDark ? lightOffBuffer.current : lightOnBuffer.current,
+        );
       }
 
       if (localStorage) {
         localStorage.setItem("theme", nextTheme);
       }
-
       setTheme(nextTheme);
     }
   };
@@ -55,23 +79,23 @@ const ThemeSwitcher = (): JSX.Element => {
     system: <Laptop size={20} />,
   };
 
-  if (mounted && theme) {
-    return (
-      <div className={styles.container}>
-        <button
-          onClick={cycleTheme}
-          className={`${styles.button} ${
-            styles[`active${theme.charAt(0).toUpperCase() + theme.slice(1)}`]
-          }`}
-          aria-label={`Current theme: ${theme}. Click to switch theme.`}
-        >
-          {themeIcons[theme]}
-        </button>
-      </div>
-    );
-  } else {
-    return <></>;
+  if (!mounted || !theme) {
+    return null;
   }
+
+  return (
+    <div className={styles.container}>
+      <button
+        onClick={cycleTheme}
+        className={`${styles.button} ${
+          styles[`active${theme.charAt(0).toUpperCase() + theme.slice(1)}`]
+        }`}
+        aria-label={`Current theme: ${theme}. Click to switch theme.`}
+      >
+        {themeIcons[theme]}
+      </button>
+    </div>
+  );
 };
 
 export default ThemeSwitcher;
