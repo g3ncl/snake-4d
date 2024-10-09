@@ -227,9 +227,10 @@ const Game = (): JSX.Element => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       const pressedKey = event.key.toLowerCase();
-      handleSetDirection(keyMap[pressedKey]);
+      let direction = keyMap[pressedKey];
+      if (!direction) return;
+      handleSetDirection(direction);
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
