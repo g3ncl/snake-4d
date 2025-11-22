@@ -27,11 +27,12 @@
 .canvasLabel {
   color: var(--text-color);
   font-weight: 600;
-  left: 1rem;
+  left: 0;
   margin: 0;
   padding: 0;
   position: absolute;
   text-align: center;
-  top: 1rem;
-  z-index: 10;
+  top: 0.5rem;
+  width: 100%;
+  z-index: 1;
 }
