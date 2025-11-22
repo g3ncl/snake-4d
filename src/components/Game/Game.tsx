@@ -359,8 +359,8 @@ const Game = (): JSX.Element => {
             right controller for ZW axis.
           </p>
           <p>
-            To eat food, your head must align with the food on <b>BOTH</b> axes
-            (2D & 4D).
+            To eat food, your head must align with the food in <b>BOTH</b> boxes
+            (XY & ZW), meaning all 4 axes, to eat in 4D space.
           </p>
           <DialogButton onClick={closeTutorial}>Start Game</DialogButton>
         </Dialog>
