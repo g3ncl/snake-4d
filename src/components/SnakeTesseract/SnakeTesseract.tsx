@@ -29,6 +29,7 @@ const SnakeTesseract = ({
   // Shared resources
   const sharedGeometry = useRef(new THREE.BufferGeometry());
   const material = useRef(new THREE.LineBasicMaterial({ color: color }));
+  const headMaterial = useRef(new THREE.LineBasicMaterial({ color: "#ffff00" }));
 
   useEffect(() => {
     material.current.color.set(color);
@@ -92,16 +93,23 @@ const SnakeTesseract = ({
       if (!linesRef.current.children[index]) {
         const line = new THREE.LineSegments(
           sharedGeometry.current,
-          material.current,
+          index === 0 ? headMaterial.current : material.current,
         );
         linesRef.current.add(line);
       }
 
       const lineSegment = linesRef.current.children[index] as THREE.LineSegments;
-      
+
       // Ensure it's using the shared geometry (in case logic drifted, though it shouldn't)
       if (lineSegment.geometry !== sharedGeometry.current) {
-         lineSegment.geometry = sharedGeometry.current;
+        lineSegment.geometry = sharedGeometry.current;
+      }
+
+      // Ensure correct material (Head vs Body)
+      const targetMaterial =
+        index === 0 ? headMaterial.current : material.current;
+      if (lineSegment.material !== targetMaterial) {
+        lineSegment.material = targetMaterial;
       }
 
       lineSegment.position.copy(pos3D);

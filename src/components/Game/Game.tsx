@@ -16,6 +16,7 @@ import Header from "../Header/Header";
 import { isOppositeDirection } from "@/utils/direction";
 import { updateScore } from "@/utils/score";
 import useTelegramCheck from "@/hooks/useTelegramCheck";
+import Dialog, { DialogButton } from "../Dialog/Dialog";
 
 const SEMI_STEPS = 5;
 const FIELD_DIMENSION = 2 * SEMI_STEPS + 1;
@@ -35,6 +36,7 @@ const keyMap: { [key: string]: Direction } = {
 const Game = (): JSX.Element => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
   const [direction, setDirection] = useState<Direction | undefined>(undefined);
   const [snakePosition, setSnakePosition] = useState<Position[]>([
     { x: 0, y: 0, z: 0, w: 0 },
@@ -80,6 +82,13 @@ const Game = (): JSX.Element => {
     setControllerType(type);
   };
 
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tutorialShown", "true");
+    }
+  };
+
   const resetGame = () => {
     setScore(0);
     scoreRef.current = 0;
@@ -113,6 +122,15 @@ const Game = (): JSX.Element => {
       source.start();
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const tutorialShown = localStorage.getItem("tutorialShown");
+      if (tutorialShown) {
+        setShowTutorial(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     directionRef.current = direction;
@@ -200,6 +218,7 @@ const Game = (): JSX.Element => {
   }, [gameOver]);
 
   useEffect(() => {
+    if (showTutorial) return; // Pause game loop during tutorial
     intervalRef.current = setInterval(() => {
       if (directionRef.current && snakePositionRef.current) {
         let newSnakePositions = updateSnakePosition(
@@ -216,7 +235,8 @@ const Game = (): JSX.Element => {
     return () => {
       intervalRef.current && clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [showTutorial]);
+
   const handleSetDirection = (direction: Direction) => {
     if (snakePositionRef.current.length === 1) {
       setDirection(direction);
@@ -226,6 +246,7 @@ const Game = (): JSX.Element => {
   };
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
+      if (showTutorial) return;
       const pressedKey = event.key.toLowerCase();
       let direction = keyMap[pressedKey];
       if (!direction) return;
@@ -235,9 +256,10 @@ const Game = (): JSX.Element => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [showTutorial]);
 
   const handleAction = (direction: Direction) => {
+    if (showTutorial) return;
     handleSetDirection(direction);
   };
 
@@ -326,15 +348,27 @@ const Game = (): JSX.Element => {
             </div>
           )}
         </div>
-        {gameOver && (
-          <dialog open={gameOver} className={styles.dialog}>
-            <span>Game Over!</span>
-            <span>Score: {score}</span>
-            <button className={styles.dialogButton} onClick={resetGame}>
-              Play Again
-            </button>
-          </dialog>
-        )}
+        <Dialog open={showTutorial}>
+          <h3>How to Play</h3>
+          <p>
+            <strong>Desktop:</strong> Use <b>WASD</b> for XY axis (Left Box) and{" "}
+            <b>IJKL</b> for ZW axis (Right Box).
+          </p>
+          <p>
+            <strong>Mobile:</strong> Use the left controller for XY axis and the
+            right controller for ZW axis.
+          </p>
+          <p>
+            To eat food, your head must align with the food on <b>BOTH</b> axes
+            (2D & 4D).
+          </p>
+          <DialogButton onClick={closeTutorial}>Start Game</DialogButton>
+        </Dialog>
+        <Dialog open={gameOver}>
+          <span>Game Over!</span>
+          <span>Score: {score}</span>
+          <DialogButton onClick={resetGame}>Play Again</DialogButton>
+        </Dialog>
       </>
     );
   } else {

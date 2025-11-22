@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { generateVertices4D } from "@/utils/generate";
+import { generateDiamond4D } from "@/utils/generate";
 import { project4dTo3d, projectVerticesTo3D } from "@/utils/projection";
 import {
   rotateVertex,
@@ -40,7 +40,7 @@ const FoodTesseract = ({
     ];
   }, [rotation]);
   const [vertices3D, edges] = useMemo(() => {
-    const [vertices4D, edges] = generateVertices4D(
+    const [vertices4D, edges] = generateDiamond4D(
       (dimension / 2) * scale,
       rotationMatrices,
     );

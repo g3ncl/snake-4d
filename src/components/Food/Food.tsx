@@ -17,7 +17,7 @@ const Food = ({
 
   return (
     <mesh ref={meshRef} position={[position.a, position.b, 0]}>
-      <planeGeometry args={[dimension * scale, dimension * scale]} />
+      <circleGeometry args={[(dimension * scale) / Math.sqrt(2), 4]} />
       <meshBasicMaterial color={color} />
     </mesh>
   );

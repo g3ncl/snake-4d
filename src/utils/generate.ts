@@ -69,6 +69,36 @@ export const generateVertices4D = (
   return [rotatedVertices, edges];
 };
 
+export const generateDiamond4D = (
+  value: number = 1,
+  rotationMatrices: number[][][] = [],
+): [number[][], number[][]] => {
+  const vertices: number[][] = [
+    [-value, 0, 0, 0],
+    [value, 0, 0, 0],
+    [0, -value, 0, 0],
+    [0, value, 0, 0],
+    [0, 0, -value, 0],
+    [0, 0, value, 0],
+    [0, 0, 0, -value],
+    [0, 0, 0, value],
+  ];
+
+  const edges: number[][] = [];
+  for (let i = 0; i < vertices.length; i++) {
+    for (let j = i + 1; j < vertices.length; j++) {
+      // Skip opposites: (0,1), (2,3), (4,5), (6,7)
+      // i is even, opposite is i+1.
+      if (i % 2 === 0 && j === i + 1) continue;
+      edges.push([i, j]);
+    }
+  }
+
+  const rotatedVertices = rotateVertices(vertices, rotationMatrices);
+
+  return [rotatedVertices, edges];
+};
+
 /**
  * Generates a random position for food in a 4-dimensional space.
  *

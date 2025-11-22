@@ -6,6 +6,7 @@ import { SnakeProps } from "@/types/props";
 
 const MAX_SNAKE_LENGTH = 10000;
 const tempObject = new THREE.Object3D();
+const headColor = new THREE.Color("#ffff00");
 
 const Snake = ({
   dimension,
@@ -15,6 +16,7 @@ const Snake = ({
   color = "#00ff00",
 }: SnakeProps): JSX.Element => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
+  const bodyColor = React.useMemo(() => new THREE.Color(color), [color]);
 
   useFrame(() => {
     if (!meshRef.current || !snakePosition.current) return;
@@ -26,8 +28,12 @@ const Snake = ({
       tempObject.position.set(pos[axis.a], pos[axis.b], 0);
       tempObject.updateMatrix();
       meshRef.current!.setMatrixAt(index, tempObject.matrix);
+      meshRef.current!.setColorAt(index, index === 0 ? headColor : bodyColor);
     });
     meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) {
+      meshRef.current.instanceColor.needsUpdate = true;
+    }
   });
 
   return (
@@ -36,7 +42,7 @@ const Snake = ({
       args={[undefined, undefined, MAX_SNAKE_LENGTH]}
     >
       <planeGeometry args={[dimension * scale, dimension * scale]} />
-      <meshBasicMaterial color={color} />
+      <meshBasicMaterial color="#ffffff" />
     </instancedMesh>
   );
 };
