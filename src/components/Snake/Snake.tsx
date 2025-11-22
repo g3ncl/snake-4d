@@ -4,6 +4,9 @@ import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { SnakeProps } from "@/types/props";
 
+const MAX_SNAKE_LENGTH = 10000;
+const tempObject = new THREE.Object3D();
+
 const Snake = ({
   dimension,
   snakePosition,
@@ -11,31 +14,30 @@ const Snake = ({
   scale = 1,
   color = "#00ff00",
 }: SnakeProps): JSX.Element => {
-  const meshRef = useRef<(THREE.Mesh | null)[]>([]);
+  const meshRef = useRef<THREE.InstancedMesh>(null);
 
   useFrame(() => {
-    if (snakePosition.current) {
-      snakePosition.current.forEach((pos, index) => {
-        if (!meshRef.current[index]) return;
-        meshRef.current[index]!.position.set(pos[axis.a], pos[axis.b], 0);
-      });
-    }
+    if (!meshRef.current || !snakePosition.current) return;
+
+    const count = snakePosition.current.length;
+    meshRef.current.count = count;
+
+    snakePosition.current.forEach((pos, index) => {
+      tempObject.position.set(pos[axis.a], pos[axis.b], 0);
+      tempObject.updateMatrix();
+      meshRef.current!.setMatrixAt(index, tempObject.matrix);
+    });
+    meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <>
-      {snakePosition.current.map((_, index) => (
-        <mesh
-          key={index}
-          // @ts-ignore
-          ref={(el) => (meshRef.current[index] = el)}
-          position={[0, 0, 0]}
-        >
-          <planeGeometry args={[dimension * scale, dimension * scale]} />
-          <meshBasicMaterial color={color} />
-        </mesh>
-      ))}
-    </>
+    <instancedMesh
+      ref={meshRef}
+      args={[undefined, undefined, MAX_SNAKE_LENGTH]}
+    >
+      <planeGeometry args={[dimension * scale, dimension * scale]} />
+      <meshBasicMaterial color={color} />
+    </instancedMesh>
   );
 };
 

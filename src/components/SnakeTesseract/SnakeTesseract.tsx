@@ -24,9 +24,15 @@ const SnakeTesseract = ({
   rotation = { xy: 0, xw: 0, xz: 0, yw: 0, yz: 0, zw: 0 },
 }: SnakeTesseractProps): JSX.Element => {
   const linesRef = useRef<THREE.Group>(new THREE.Group());
-  const geometries = useRef<THREE.BufferGeometry[]>([]);
   const projectedPositions = useRef<THREE.Vector3[]>([]);
+  
+  // Shared resources
+  const sharedGeometry = useRef(new THREE.BufferGeometry());
   const material = useRef(new THREE.LineBasicMaterial({ color: color }));
+
+  useEffect(() => {
+    material.current.color.set(color);
+  }, [color]);
 
   const rotationMatrices: number[][][] = useMemo(() => {
     const { xy, xw, xz, yw, yz, zw } = rotation;
@@ -49,60 +55,64 @@ const SnakeTesseract = ({
     return [vertices3D, edges];
   }, [scale, rotationMatrices, dimension]);
 
+  useEffect(() => {
+    const geoPositions: number[] = [];
+    edges.forEach((edge) => {
+      const [start, end] = edge;
+      geoPositions.push(
+        vertices3D[start].x,
+        vertices3D[start].y,
+        vertices3D[start].z,
+      );
+      geoPositions.push(
+        vertices3D[end].x,
+        vertices3D[end].y,
+        vertices3D[end].z,
+      );
+    });
+
+    sharedGeometry.current.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(geoPositions, 3),
+    );
+    sharedGeometry.current.attributes.position.needsUpdate = true;
+  }, [vertices3D, edges]);
+
   useFrame(() => {
+    // Update Instances
     positions.current.forEach((position, index) => {
       let rotatedPosition = [position.x, position.y, position.z, position.w];
       rotationMatrices.forEach((rotationMatrix) => {
         rotatedPosition = rotateVertex(rotatedPosition, rotationMatrix);
       });
-      projectedPositions.current[index] = project4dTo3d(
-        rotatedPosition,
-        DISTANCE,
-      );
 
-      const positions: number[] = [];
-      edges.forEach((edge) => {
-        const [start, end] = edge;
-        positions.push(
-          vertices3D[start].x,
-          vertices3D[start].y,
-          vertices3D[start].z,
-        );
-        positions.push(vertices3D[end].x, vertices3D[end].y, vertices3D[end].z);
-      });
+      const pos3D = project4dTo3d(rotatedPosition, DISTANCE);
 
-      if (!geometries.current[index]) {
-        geometries.current[index] = new THREE.BufferGeometry();
-      }
-
-      geometries.current[index].setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(positions, 3),
-      );
-
+      // Ensure child exists
       if (!linesRef.current.children[index]) {
         const line = new THREE.LineSegments(
-          geometries.current[index],
+          sharedGeometry.current,
           material.current,
         );
         linesRef.current.add(line);
-      } else {
-        (linesRef.current.children[index] as THREE.LineSegments).geometry =
-          geometries.current[index];
       }
 
-      if (projectedPositions.current[index]) {
-        linesRef.current.children[index].position.copy(
-          projectedPositions.current[index],
-        );
+      const lineSegment = linesRef.current.children[index] as THREE.LineSegments;
+      
+      // Ensure it's using the shared geometry (in case logic drifted, though it shouldn't)
+      if (lineSegment.geometry !== sharedGeometry.current) {
+         lineSegment.geometry = sharedGeometry.current;
       }
+
+      lineSegment.position.copy(pos3D);
+      lineSegment.visible = true;
     });
-    // Remove excess line segments if positions array has shrunk
-    while (linesRef.current.children.length > positions.current.length) {
-      const lastChild =
-        linesRef.current.children[linesRef.current.children.length - 1];
-      linesRef.current.remove(lastChild);
-      (lastChild as THREE.LineSegments).geometry.dispose();
+
+    // 3. Hide excess children
+    // Instead of removing/disposing, we just hide them to pool objects. 
+    // This reduces GC overhead.
+    for (let i = positions.current.length; i < linesRef.current.children.length; i++) {
+        linesRef.current.children[i].visible = false;
     }
   });
 
