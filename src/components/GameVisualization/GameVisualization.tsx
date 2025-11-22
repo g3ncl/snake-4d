@@ -51,6 +51,7 @@ const GameVisualization = ({
       </div>
       <div className={styles.bottomHalf}>
         <div className={styles.bottomLeft}>
+          <div className={styles.canvasLabel}>XY Axis</div>
           <Canvas
             className={styles.canvas}
             camera={{ position: [0, 0, 10], fov: 75 }}
@@ -72,6 +73,7 @@ const GameVisualization = ({
           </Canvas>
         </div>
         <div className={styles.bottomRight}>
+          <div className={styles.canvasLabel}>ZW Axis</div>
           <Canvas
             className={styles.canvas}
             camera={{ position: [0, 0, 10], fov: 75 }}
