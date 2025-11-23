@@ -13,7 +13,10 @@ export type HeaderProps = {
   controllerType: ControllerType;
   updateControllerType: (type: ControllerType) => void;
 };
-export type MenuProps = HeaderProps;
+export interface MenuProps {
+  rotation: Rotation;
+  updateRotation: (label: string, value: number) => void;
+}
 
 export type AngleSliderProps = {
   label: string;
