@@ -11,6 +11,10 @@ import { GameVisualizationProps } from "@/types/props";
 import styles from "./styles/styles.module.css";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { COLORS, GAME_SETTINGS, LAYOUT } from "@/config/constants";
+
+const XY_AXIS = { a: "x", b: "y" } as const;
+const ZW_AXIS = { a: "z", b: "w" } as const;
 
 const GameVisualization = ({
   dimension,
@@ -19,23 +23,25 @@ const GameVisualization = ({
   rotation,
 }: GameVisualizationProps): React.JSX.Element => {
   const { theme, systemTheme } = useTheme();
-  const [lineColor, setLineColor] = useState("#666");
+  const [lineColor, setLineColor] = useState(COLORS.GRID.LIGHT);
 
   useEffect(() => {
     const currentTheme = theme === "system" ? systemTheme : theme;
-    setLineColor(currentTheme === "dark" ? "#d0d0d0" : "#666");
+    setLineColor(
+      currentTheme === "dark" ? COLORS.GRID.DARK : COLORS.GRID.LIGHT,
+    );
   }, [theme, systemTheme]);
 
-  const fov = 75;
-  // Calculate distance to fit the dimension with some padding (1.1)
+  const fov = GAME_SETTINGS.FOV;
+  // Calculate distance to fit the dimension with some padding
   // formula: distance = (height / 2) / tan(fov / 2)
   const cameraDistance =
-    (dimension / (2 * Math.tan((fov * Math.PI) / 360))) * 1.1;
+    (dimension / (2 * Math.tan((fov * Math.PI) / 360))) * LAYOUT.ZOOM_PADDING;
 
   return (
     <>
       <div className={styles.topHalf}>
-        <Canvas camera={{ position: [0, 0, 18], fov: 75 }}>
+        <Canvas camera={{ position: [0, 0, 18], fov: fov }}>
           <Tesseract
             dimension={dimension}
             scale={1}
@@ -76,7 +82,7 @@ const GameVisualization = ({
               <Snake
                 dimension={1}
                 snakePosition={snakePosition}
-                axis={{ a: "x", b: "y" }}
+                axis={XY_AXIS}
               />
             </Canvas>
           </div>
@@ -96,13 +102,13 @@ const GameVisualization = ({
                   a: foodPosition.current.z,
                   b: foodPosition.current.w,
                 }}
-                color="#ff0000"
+                color={COLORS.FOOD}
               />
               <Snake
                 dimension={1}
                 snakePosition={snakePosition}
-                axis={{ a: "z", b: "w" }}
-                color="#00ff00"
+                axis={ZW_AXIS}
+                color={COLORS.SNAKE.BODY}
               />
             </Canvas>
           </div>

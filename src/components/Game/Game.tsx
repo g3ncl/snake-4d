@@ -20,10 +20,8 @@ import Dialog, { DialogButton } from "../Dialog/Dialog";
 import useSound from "@/hooks/useSound";
 import { useSettings } from "@/context/SettingsContext";
 import { triggerVibration } from "@/utils/vibration";
+import { GAME_SETTINGS } from "@/config/constants";
 
-const SEMI_STEPS = 5;
-const FIELD_DIMENSION = 2 * SEMI_STEPS + 1;
-const TIME = 200;
 const keyMap: { [key: string]: Direction } = {
   w: { axis: "y", delta: 1 },
   s: { axis: "y", delta: -1 },
@@ -44,7 +42,7 @@ const Game = (): React.JSX.Element => {
     { x: 0, y: 0, z: 0, w: 0 },
   ]);
   const [foodPosition, setFoodPosition] = useState<Position>(
-    generateFoodPosition(FIELD_DIMENSION),
+    generateFoodPosition(GAME_SETTINGS.FIELD_DIMENSION),
   );
   const [highScore, setHighScore] = useState(
     typeof window !== "undefined" ? localStorage.getItem("highScore") : 0,
@@ -100,7 +98,7 @@ const Game = (): React.JSX.Element => {
     setSnakePosition([{ x: 0, y: 0, z: 0, w: 0 }]);
     snakePositionRef.current = [{ x: 0, y: 0, z: 0, w: 0 }];
     setGameOver(false);
-    let newFoodPosition = generateFoodPosition(FIELD_DIMENSION);
+    let newFoodPosition = generateFoodPosition(GAME_SETTINGS.FIELD_DIMENSION);
     foodPositionRef.current = newFoodPosition;
     setFoodPosition(newFoodPosition);
     intervalRef.current = setInterval(() => {
@@ -108,13 +106,13 @@ const Game = (): React.JSX.Element => {
         let newSnakePositions = updateSnakePosition(
           snakePositionRef.current,
           directionRef.current.axis,
-          FIELD_DIMENSION,
+          GAME_SETTINGS.FIELD_DIMENSION,
           directionRef.current.delta,
         );
         snakePositionRef.current = newSnakePositions;
         setSnakePosition(newSnakePositions);
       }
-    }, TIME);
+    }, GAME_SETTINGS.TICK_RATE);
   };
 
   useEffect(() => {
@@ -162,11 +160,11 @@ const Game = (): React.JSX.Element => {
         updateSnakeBlockPosition(
           pos.at(-1)!,
           directionRef.current.axis,
-          FIELD_DIMENSION,
+          GAME_SETTINGS.FIELD_DIMENSION,
           (directionRef.current.delta * -1) as -1 | 1,
         ),
       );
-      let newFoodPosition = generateFoodPosition(FIELD_DIMENSION);
+      let newFoodPosition = generateFoodPosition(GAME_SETTINGS.FIELD_DIMENSION);
 
       snakePositionRef.current = pos;
       foodPositionRef.current = newFoodPosition;
@@ -206,13 +204,13 @@ const Game = (): React.JSX.Element => {
         let newSnakePositions = updateSnakePosition(
           snakePositionRef.current,
           directionRef.current.axis,
-          FIELD_DIMENSION,
+          GAME_SETTINGS.FIELD_DIMENSION,
           directionRef.current.delta,
         );
         snakePositionRef.current = newSnakePositions;
         setSnakePosition(newSnakePositions);
       }
-    }, TIME);
+    }, GAME_SETTINGS.TICK_RATE);
 
     return () => {
       intervalRef.current && clearInterval(intervalRef.current);
@@ -283,7 +281,7 @@ const Game = (): React.JSX.Element => {
               </div>
               <div className={styles.gameArea}>
                 <GameVisualization
-                  dimension={FIELD_DIMENSION}
+                  dimension={GAME_SETTINGS.FIELD_DIMENSION}
                   snakePosition={snakePositionRef}
                   foodPosition={foodPositionRef}
                   rotation={rotation}
