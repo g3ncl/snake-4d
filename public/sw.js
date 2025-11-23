@@ -1,74 +1,91 @@
-const CACHE_NAME = "snake-4d-cache-v1";
-const urlsToCache = [
+const CACHE_NAME = "snake-4d-cache-v3"; // Incremented cache version
+const APP_SHELL_URLS = [
   "/",
-  "/assets/icons/icon-48x48.png",
-  "/assets/icons/icon-72x72.png",
-  "/assets/icons/icon-96x96.png",
-  "/assets/icons/icon-128x128.png",
-  "/assets/icons/icon-144x144.png",
-  "/assets/icons/icon-152x152.png",
+  "/manifest.json",
   "/assets/icons/icon-192x192.png",
-  "/assets/icons/icon-256x256.png",
-  "/assets/icons/icon-384x384.png",
   "/assets/icons/icon-512x512.png",
-  "/assets/eating.mp3",
-  "/assets/switch-on.mp3",
-  "/assets/switch-off.mp3",
-  // Note: App assets (JS/CSS) are often cached automatically by service workers
-  // created by build tools, but for a manual SW, you might need to add them
-  // or use a more dynamic caching strategy.
+  "/screenshots/desktop_screenshot.png",
+  "/screenshots/mobile_screenshot.png",
 ];
 
+// Install: Cache the app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("Opened cache");
-      return cache.addAll(urlsToCache);
-    }),
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("Opened cache and caching app shell");
+        return cache.addAll(APP_SHELL_URLS);
+      })
+      .catch((err) => {
+        console.error("Failed to cache app shell:", err);
+      }),
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache hit - return response
-      if (response) {
-        return response;
-      }
-
-      // Clone the request
-      const fetchRequest = event.request.clone();
-
-      return fetch(fetchRequest).then((response) => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
-
-        // Clone the response
-        const responseToCache = response.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return response;
-      });
-    }),
-  );
-});
-
+// Activate: Clean up old caches
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
+            console.log("Deleting old cache:", cacheName);
             return caches.delete(cacheName);
           }
         }),
       );
+    }),
+  );
+});
+
+// Fetch: Implement robust caching strategies
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Go to the network first for navigation requests
+      if (event.request.mode === "navigate") {
+        try {
+          const networkResponse = await fetch(event.request);
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        } catch (error) {
+          // If network fails, try the cache
+          return cache.match(event.request);
+        }
+      }
+
+      // For other requests, use a cache-first, then network-fallback-and-revalidate strategy
+      const cachedResponse = await cache.match(event.request);
+      if (cachedResponse) {
+        // Serve from cache and update in the background
+        const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          })
+          .catch((err) => {
+            console.warn(
+              `Failed to fetch and update ${event.request.url}`,
+              err,
+            );
+          });
+        return cachedResponse;
+      }
+
+      // If not in cache, go to the network
+      try {
+        const networkResponse = await fetch(event.request);
+        if (networkResponse && networkResponse.status === 200) {
+          cache.put(event.request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (error) {
+        console.error(`Fetch failed for ${event.request.url}`, error);
+        // Optionally, return a fallback/offline page here
+      }
     }),
   );
 });

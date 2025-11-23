@@ -57,5 +57,21 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop_screenshot.png",
+      "sizes": "1920x943",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop Gameplay"
+    },
+    {
+      "src": "/screenshots/mobile_screenshot.png",
+      "sizes": "429x842",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Gameplay"
+    }
   ]
 }
