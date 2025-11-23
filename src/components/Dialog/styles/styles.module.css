@@ -2,6 +2,7 @@
   background-color: var(--primary-bg);
   border: 1px solid var(--text-color);
   border-radius: 0.5rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
@@ -9,11 +10,11 @@
   gap: 1rem;
   inset: 0;
   margin: auto;
-  max-width: 400px;
-  min-width: 200px;
+  max-width: min(90dvw, 30rem);
   padding: 1rem;
   position: absolute;
   text-align: center;
+  width: fit-content;
   z-index: 100;
 }
 
