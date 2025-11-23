@@ -82,6 +82,7 @@ const Game = (): React.JSX.Element => {
 
   const updateControllerType = (type: ControllerType) => {
     setControllerType(type);
+    localStorage.setItem("controllerType", type);
   };
 
   const closeTutorial = () => {

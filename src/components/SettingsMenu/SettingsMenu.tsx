@@ -37,7 +37,7 @@ const SettingsMenu = ({
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleInteractionOutside = (event: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpen(false);
         setShowRotation(false);
@@ -45,11 +45,13 @@ const SettingsMenu = ({
     };
 
     if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleInteractionOutside);
+      document.addEventListener("touchstart", handleInteractionOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleInteractionOutside);
+      document.removeEventListener("touchstart", handleInteractionOutside);
     };
   }, [open]);
 

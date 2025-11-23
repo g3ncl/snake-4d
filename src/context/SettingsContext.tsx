@@ -17,7 +17,7 @@ export const SettingsProvider = ({
 }: {
   children: React.ReactNode;
 }): React.JSX.Element => {
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const [isVibrationEnabled, setIsVibrationEnabled] = useState(true);
   const [mounted, setMounted] = useState(false);
 

@@ -27,8 +27,9 @@ const FoodTesseract = ({
   const geometry = useRef<THREE.BufferGeometry>(new THREE.BufferGeometry());
   const projectedPosition = useRef<THREE.Vector3 | undefined>(undefined);
   const material = useRef(new THREE.LineBasicMaterial({ color: color }));
+  const animationTime = useRef(0);
 
-  const rotationMatrices: number[][][] = useMemo(() => {
+  const viewRotationMatrices: number[][][] = useMemo(() => {
     const { xy, xw, xz, yw, yz, zw } = rotation;
     return [
       rotationXY(xy),
@@ -39,31 +40,44 @@ const FoodTesseract = ({
       rotationZW(zw),
     ];
   }, [rotation]);
-  const [vertices3D, edges] = useMemo(() => {
-    const [vertices4D, edges] = generateDiamond4D(
-      (dimension / 2) * scale,
-      rotationMatrices,
-    );
-    const vertices3D = projectVerticesTo3D(vertices4D, DISTANCE);
-    return [vertices3D, edges];
-  }, [scale, rotationMatrices, dimension]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    animationTime.current += delta;
+
+    const animRotationMatrices = [
+      rotationXY(animationTime.current),
+      rotationZW(animationTime.current * 0.7),
+      rotationXZ(animationTime.current * 0.5),
+      rotationYW(animationTime.current * 0.3),
+    ];
+
+    const [baseVertices, edges] = generateDiamond4D(
+      (dimension / 2) * scale,
+      animRotationMatrices,
+    );
+
+    const viewRotatedVertices = baseVertices.map((vertex) => {
+      let rotatedVertex = [...vertex];
+      viewRotationMatrices.forEach((matrix) => {
+        rotatedVertex = rotateVertex(rotatedVertex, matrix);
+      });
+      return rotatedVertex;
+    });
+
+    const vertices3D = projectVerticesTo3D(viewRotatedVertices, DISTANCE);
+
     let rotatedPosition = [
       position.current.x,
       position.current.y,
       position.current.z,
       position.current.w,
     ];
-
-    rotationMatrices.forEach((rotationMatrix) => {
+    viewRotationMatrices.forEach((rotationMatrix) => {
       rotatedPosition = rotateVertex(rotatedPosition, rotationMatrix);
     });
-
     projectedPosition.current = project4dTo3d(rotatedPosition, DISTANCE);
 
     const positions: number[] = [];
-
     edges.forEach((edge) => {
       const [start, end] = edge;
       positions.push(
@@ -73,7 +87,6 @@ const FoodTesseract = ({
       );
       positions.push(vertices3D[end].x, vertices3D[end].y, vertices3D[end].z);
     });
-
     geometry.current.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(positions, 3),
@@ -85,7 +98,7 @@ const FoodTesseract = ({
       line.current.geometry.dispose();
       line.current.geometry = geometry.current;
     }
-    if (projectedPosition) {
+    if (projectedPosition.current) {
       line.current.position.copy(projectedPosition.current);
     }
   });

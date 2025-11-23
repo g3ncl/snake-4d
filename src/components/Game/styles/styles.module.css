@@ -72,7 +72,7 @@
 
   .portraitControls {
     display: flex;
-    flex-basis: 40dvh;
+    flex-basis: 28dvh;
   }
 
   .scoreContainer {
