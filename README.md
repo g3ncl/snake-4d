@@ -14,13 +14,13 @@ Then, install the dependencies:
 
 ```bash
 cd snake-4d
-npm install
+pnpm install
 ```
 
 Start the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to play the game.
