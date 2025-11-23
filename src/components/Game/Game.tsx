@@ -17,11 +17,11 @@ import { isOppositeDirection } from "@/utils/direction";
 import { updateScore } from "@/utils/score";
 import useTelegramCheck from "@/hooks/useTelegramCheck";
 import Dialog, { DialogButton } from "../Dialog/Dialog";
+import useSound from "@/hooks/useSound";
 
 const SEMI_STEPS = 5;
 const FIELD_DIMENSION = 2 * SEMI_STEPS + 1;
 const TIME = 200;
-const baseUrl = "https://snake4d.netlify.app";
 const keyMap: { [key: string]: Direction } = {
   w: { axis: "y", delta: 1 },
   s: { axis: "y", delta: -1 },
@@ -65,8 +65,7 @@ const Game = (): React.JSX.Element => {
   const highScoreRef = useRef(highScore);
   const scoreRef = useRef(score);
 
-  const audioContext = useRef<AudioContext | null>(null);
-  const eatingAudioBuffer = useRef<AudioBuffer | null>(null);
+  const playEatingSound = useSound("/assets/eating.mp3");
 
   const { isFromTelegram, telegramUserId, telegramMessageId } =
     useTelegramCheck();
@@ -114,15 +113,6 @@ const Game = (): React.JSX.Element => {
     }, TIME);
   };
 
-  const playSound = (buffer: AudioBuffer | null) => {
-    if (audioContext.current && buffer) {
-      const source = audioContext.current.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioContext.current.destination);
-      source.start();
-    }
-  };
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       const tutorialShown = localStorage.getItem("tutorialShown");
@@ -141,23 +131,6 @@ const Game = (): React.JSX.Element => {
     // The game component is initially rendered without isMobile beeing initialized,
     // which triggers the hydration error.
     setIsMounted(true);
-    audioContext.current = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-
-    const loadSound = async (url: string) => {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      return await audioContext.current!.decodeAudioData(arrayBuffer);
-    };
-    loadSound(`${baseUrl}/assets/eating.mp3`).then((buffer) => {
-      eatingAudioBuffer.current = buffer;
-    });
-
-    return () => {
-      if (audioContext.current) {
-        audioContext.current.close();
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -174,7 +147,7 @@ const Game = (): React.JSX.Element => {
     ) {
       setScore((prev) => prev + 1);
       scoreRef.current += 1;
-      playSound(eatingAudioBuffer.current);
+      playEatingSound();
       let pos = snakePositionRef.current;
       pos.push(
         updateSnakeBlockPosition(

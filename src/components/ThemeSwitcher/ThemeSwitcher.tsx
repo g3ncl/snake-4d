@@ -1,55 +1,20 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Laptop } from "lucide-react";
 import styles from "./styles/styles.module.scss";
-
-const baseUrl = "https://snake4d.netlify.app";
+import useSound from "@/hooks/useSound";
 
 const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
-  const audioContext = useRef<AudioContext | null>(null);
-  const lightOnBuffer = useRef<AudioBuffer | null>(null);
-  const lightOffBuffer = useRef<AudioBuffer | null>(null);
+
+  const playSwitchOn = useSound("/assets/switch-on.mp3");
+  const playSwitchOff = useSound("/assets/switch-off.mp3");
 
   useEffect(() => {
     setMounted(true);
-
-    if (typeof window !== "undefined") {
-      audioContext.current = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
-
-      const loadSound = async (url: string) => {
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        return await audioContext.current!.decodeAudioData(arrayBuffer);
-      };
-
-      Promise.all([
-        loadSound(`${baseUrl}/assets/switch-on.mp3`),
-        loadSound(`${baseUrl}/assets/switch-off.mp3`),
-      ]).then(([onBuffer, offBuffer]) => {
-        lightOnBuffer.current = onBuffer;
-        lightOffBuffer.current = offBuffer;
-      });
-    }
-
-    return () => {
-      if (audioContext.current) {
-        audioContext.current.close();
-      }
-    };
   }, []);
-
-  const playSound = (buffer: AudioBuffer | null) => {
-    if (audioContext.current && buffer) {
-      const source = audioContext.current.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioContext.current.destination);
-      source.start();
-    }
-  };
 
   const cycleTheme = (): void => {
     if (theme && systemTheme) {
@@ -63,9 +28,11 @@ const ThemeSwitcher = () => {
       const isNextThemeDark = nextEffectiveTheme === "dark";
 
       if (currentEffectiveTheme !== nextEffectiveTheme) {
-        playSound(
-          isNextThemeDark ? lightOffBuffer.current : lightOnBuffer.current,
-        );
+        if (isNextThemeDark) {
+          playSwitchOff();
+        } else {
+          playSwitchOn();
+        }
       }
 
       if (localStorage) {
