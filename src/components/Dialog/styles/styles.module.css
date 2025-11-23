@@ -10,7 +10,9 @@
   gap: 1rem;
   inset: 0;
   margin: auto;
+  max-height: 90dvh;
   max-width: min(90dvw, 30rem);
+  overflow: auto;
   padding: 1rem;
   position: absolute;
   text-align: center;
