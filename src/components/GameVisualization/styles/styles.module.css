@@ -20,6 +20,7 @@
   align-items: center;
   display: flex;
   flex: 1;
+  flex-direction: column;
   font-weight: 600;
   justify-content: center;
   min-width: 0;
@@ -43,12 +44,12 @@
 .canvasLabel {
   color: var(--text-color);
   font-weight: 600;
-  left: 0;
   margin: 0;
+  margin-bottom: -1.5rem;
   padding: 0;
-  position: absolute;
+  pointer-events: none;
+  position: relative;
   text-align: center;
-  top: 0.5rem;
   width: 100%;
-  z-index: 1;
+  z-index: 10;
 }
