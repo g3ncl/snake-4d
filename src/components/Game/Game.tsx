@@ -18,6 +18,8 @@ import { updateScore } from "@/utils/score";
 import useTelegramCheck from "@/hooks/useTelegramCheck";
 import Dialog, { DialogButton } from "../Dialog/Dialog";
 import useSound from "@/hooks/useSound";
+import { useSettings } from "@/context/SettingsContext";
+import { triggerVibration } from "@/utils/vibration";
 
 const SEMI_STEPS = 5;
 const FIELD_DIMENSION = 2 * SEMI_STEPS + 1;
@@ -66,6 +68,7 @@ const Game = (): React.JSX.Element => {
   const scoreRef = useRef(score);
 
   const playEatingSound = useSound("/assets/eating.mp3");
+  const { isSoundEnabled, isVibrationEnabled } = useSettings();
 
   const { isFromTelegram, telegramUserId, telegramMessageId } =
     useTelegramCheck();
@@ -147,7 +150,12 @@ const Game = (): React.JSX.Element => {
     ) {
       setScore((prev) => prev + 1);
       scoreRef.current += 1;
-      playEatingSound();
+      if (isSoundEnabled) {
+        playEatingSound();
+      }
+      if (isVibrationEnabled) {
+        triggerVibration();
+      }
       let pos = snakePositionRef.current;
       pos.push(
         updateSnakeBlockPosition(

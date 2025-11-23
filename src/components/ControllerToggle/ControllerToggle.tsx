@@ -13,7 +13,7 @@ const ControllerToggle = ({
 
   return (
     <div className={styles.toggleContainer}>
-      <span className={styles.label}>Controller type:</span>
+      <span className={styles.label}>Controller</span>
       <div className={styles.toggle}>
         <button
           className={`${styles.toggleButton} ${ControllerType === "Touchpad" ? styles.active : ""}`}

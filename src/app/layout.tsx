@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ClientThemeProvider from "@/components/ClientThemeProvider/ClientThemeProvider";
+import { SettingsProvider } from "@/context/SettingsContext";
 
 import "./globals.scss";
 import localFont from "next/font/local";
@@ -27,9 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={iosevka.className}>
-        <ClientThemeProvider enableSystem defaultTheme="system">
-          {children}
-        </ClientThemeProvider>
+        <SettingsProvider>
+          <ClientThemeProvider enableSystem defaultTheme="system">
+            {children}
+          </ClientThemeProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

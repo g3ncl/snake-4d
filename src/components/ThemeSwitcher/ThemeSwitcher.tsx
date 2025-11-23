@@ -4,10 +4,12 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Laptop } from "lucide-react";
 import styles from "./styles/styles.module.scss";
 import useSound from "@/hooks/useSound";
+import { useSettings } from "@/context/SettingsContext";
 
 const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
+  const { isSoundEnabled } = useSettings();
 
   const playSwitchOn = useSound("/assets/switch-on.mp3");
   const playSwitchOff = useSound("/assets/switch-off.mp3");
@@ -27,7 +29,7 @@ const ThemeSwitcher = () => {
       const nextEffectiveTheme = getEffectiveTheme(nextTheme, systemTheme);
       const isNextThemeDark = nextEffectiveTheme === "dark";
 
-      if (currentEffectiveTheme !== nextEffectiveTheme) {
+      if (currentEffectiveTheme !== nextEffectiveTheme && isSoundEnabled) {
         if (isNextThemeDark) {
           playSwitchOff();
         } else {
