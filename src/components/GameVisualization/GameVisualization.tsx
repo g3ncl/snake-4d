@@ -25,6 +25,13 @@ const GameVisualization = ({
     const currentTheme = theme === "system" ? systemTheme : theme;
     setLineColor(currentTheme === "dark" ? "#d0d0d0" : "#666");
   }, [theme, systemTheme]);
+
+  const fov = 75;
+  // Calculate distance to fit the dimension with some padding (1.1)
+  // formula: distance = (height / 2) / tan(fov / 2)
+  const cameraDistance =
+    (dimension / (2 * Math.tan((fov * Math.PI) / 360))) * 1.1;
+
   return (
     <>
       <div className={styles.topHalf}>
@@ -52,49 +59,53 @@ const GameVisualization = ({
       <div className={styles.bottomHalf}>
         <div className={styles.bottomLeft}>
           <div className={styles.canvasLabel}>XY Axis</div>
-          <Canvas
-            className={styles.canvas}
-            camera={{ position: [0, 0, 10], fov: 75 }}
-          >
-            <Square dimension={dimension} color={lineColor} />
-            <Food
-              scale={0.5}
-              dimension={1}
-              position={{
-                a: foodPosition.current.x,
-                b: foodPosition.current.y,
-              }}
-            />
-            <Snake
-              dimension={1}
-              snakePosition={snakePosition}
-              axis={{ a: "x", b: "y" }}
-            />
-          </Canvas>
+          <div className={styles.canvasContainer}>
+            <Canvas
+              className={styles.canvas}
+              camera={{ position: [0, 0, cameraDistance], fov: fov }}
+            >
+              <Square dimension={dimension} color={lineColor} />
+              <Food
+                scale={0.5}
+                dimension={1}
+                position={{
+                  a: foodPosition.current.x,
+                  b: foodPosition.current.y,
+                }}
+              />
+              <Snake
+                dimension={1}
+                snakePosition={snakePosition}
+                axis={{ a: "x", b: "y" }}
+              />
+            </Canvas>
+          </div>
         </div>
         <div className={styles.bottomRight}>
           <div className={styles.canvasLabel}>ZW Axis</div>
-          <Canvas
-            className={styles.canvas}
-            camera={{ position: [0, 0, 10], fov: 75 }}
-          >
-            <Square dimension={dimension} color={lineColor} />
-            <Food
-              dimension={1}
-              scale={0.5}
-              position={{
-                a: foodPosition.current.z,
-                b: foodPosition.current.w,
-              }}
-              color="#ff0000"
-            />
-            <Snake
-              dimension={1}
-              snakePosition={snakePosition}
-              axis={{ a: "z", b: "w" }}
-              color="#00ff00"
-            />
-          </Canvas>
+          <div className={styles.canvasContainer}>
+            <Canvas
+              className={styles.canvas}
+              camera={{ position: [0, 0, cameraDistance], fov: fov }}
+            >
+              <Square dimension={dimension} color={lineColor} />
+              <Food
+                dimension={1}
+                scale={0.5}
+                position={{
+                  a: foodPosition.current.z,
+                  b: foodPosition.current.w,
+                }}
+                color="#ff0000"
+              />
+              <Snake
+                dimension={1}
+                snakePosition={snakePosition}
+                axis={{ a: "z", b: "w" }}
+                color="#00ff00"
+              />
+            </Canvas>
+          </div>
         </div>
       </div>
     </>

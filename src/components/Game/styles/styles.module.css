@@ -49,10 +49,14 @@
 
 .gameArea {
   align-items: center;
+  aspect-ratio: 1 / 1;
   display: flex;
   flex: 1;
   flex-direction: column;
   justify-content: center;
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -72,7 +76,7 @@
 
   .portraitControls {
     display: flex;
-    flex-basis: 32dvh;
+    flex-basis: 35dvh;
   }
 
   .scoreContainer {

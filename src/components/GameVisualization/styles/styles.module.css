@@ -1,22 +1,38 @@
 .topHalf {
-  height: 50%;
+  flex: 1;
+  max-width: 100%;
+  min-height: 0;
   width: 100%;
 }
 
 .bottomHalf {
   display: flex;
+  flex: 1;
   gap: 0.5rem;
-  height: 50%;
   justify-content: center;
-  width: calc(100% - 1rem);
+  max-width: 100%;
+  min-height: 0;
+  width: 100%;
 }
 
 .bottomLeft,
 .bottomRight {
+  align-items: center;
+  display: flex;
+  flex: 1;
   font-weight: 600;
+  justify-content: center;
+  min-width: 0;
   position: relative;
   text-align: center;
-  width: 50%;
+}
+
+.canvasContainer {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .canvas {
