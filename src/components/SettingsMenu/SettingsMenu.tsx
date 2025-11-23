@@ -37,21 +37,26 @@ const SettingsMenu = ({
   };
 
   useEffect(() => {
-    const handleInteractionOutside = (event: MouseEvent | TouchEvent) => {
+    const handleInteractionOutside = (
+      event: MouseEvent | TouchEvent | Event,
+    ) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpen(false);
         setShowRotation(false);
+        setIsActive(false);
       }
     };
 
     if (open) {
       document.addEventListener("mousedown", handleInteractionOutside);
       document.addEventListener("touchstart", handleInteractionOutside);
+      document.addEventListener("scroll", handleInteractionOutside, true);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleInteractionOutside);
       document.removeEventListener("touchstart", handleInteractionOutside);
+      document.removeEventListener("scroll", handleInteractionOutside, true);
     };
   }, [open]);
 
