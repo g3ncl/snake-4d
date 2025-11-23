@@ -22,6 +22,7 @@
   flex: 1;
   flex-direction: column;
   font-weight: 600;
+  gap: 0;
   justify-content: center;
   min-width: 0;
   position: relative;
@@ -45,11 +46,8 @@
   color: var(--text-color);
   font-weight: 600;
   margin: 0;
-  margin-bottom: -1.5rem;
   padding: 0;
-  pointer-events: none;
   position: relative;
   text-align: center;
   width: 100%;
-  z-index: 10;
 }
