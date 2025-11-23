@@ -17,7 +17,7 @@ const GameVisualization = ({
   snakePosition,
   foodPosition,
   rotation,
-}: GameVisualizationProps): JSX.Element => {
+}: GameVisualizationProps): React.JSX.Element => {
   const { theme, systemTheme } = useTheme();
   const [lineColor, setLineColor] = useState("#666");
 

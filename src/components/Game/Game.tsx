@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GameVisualization from "../GameVisualization/GameVisualization";
 import { ControllerType, Direction, Position } from "@/types/types";
 import { generateFoodPosition } from "@/utils/generate";
@@ -33,7 +33,7 @@ const keyMap: { [key: string]: Direction } = {
   l: { axis: "z", delta: 1 },
 };
 
-const Game = (): JSX.Element => {
+const Game = (): React.JSX.Element => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);

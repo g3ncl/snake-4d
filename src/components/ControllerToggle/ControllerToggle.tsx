@@ -6,7 +6,7 @@ import { ControllerToggleProps } from "@/types/props";
 const ControllerToggle = ({
   updateControllerType,
   ControllerType,
-}: ControllerToggleProps): JSX.Element => {
+}: ControllerToggleProps): React.JSX.Element => {
   const toggleControllerType = (newValue: ControllerType) => {
     updateControllerType(newValue);
   };

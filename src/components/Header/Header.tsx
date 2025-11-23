@@ -9,7 +9,7 @@ const Header = ({
   controllerType,
   updateRotation,
   updateControllerType,
-}: HeaderProps): JSX.Element => {
+}: HeaderProps): React.JSX.Element => {
   return (
     <header className={styles.header}>
       <div className={styles.leftButtons}>

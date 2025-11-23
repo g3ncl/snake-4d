@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { generateVertices4D } from "@/utils/generate";
 import { projectVerticesTo3D } from "@/utils/projection";
@@ -20,7 +20,7 @@ const Tesseract = ({
   color,
   scale = 1,
   rotation = { xy: 0, xw: 0, xz: 0, yw: 0, yz: 0, zw: 0 },
-}: TesseractProps): JSX.Element => {
+}: TesseractProps): React.JSX.Element => {
   const lineRef = useRef<THREE.LineSegments | null>(null);
   const geometry = useRef<THREE.BufferGeometry>(new THREE.BufferGeometry());
   const projectedPositionRef = useRef<THREE.Vector3>(

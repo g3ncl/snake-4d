@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./styles/styles.module.scss";
 import { MenuIcon, X } from "lucide-react";
 import AngleSlider from "../AngleSlider/AngleSlider";
@@ -12,7 +12,7 @@ const Menu = ({
   controllerType,
   updateRotation,
   updateControllerType,
-}: MenuProps): JSX.Element => {
+}: MenuProps): React.JSX.Element => {
   const [open, setOpen] = useState(false);
 
   const handleMenuClick = () => {

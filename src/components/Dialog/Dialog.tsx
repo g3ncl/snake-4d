@@ -21,7 +21,11 @@ export const DialogButton = ({
   );
 };
 
-const Dialog = ({ open, children, className }: DialogProps): JSX.Element => {
+const Dialog = ({
+  open,
+  children,
+  className,
+}: DialogProps): React.JSX.Element => {
   if (!open) return <></>;
 
   return (

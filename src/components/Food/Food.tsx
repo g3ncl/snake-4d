@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { SquareProps } from "@/types/props";
 
@@ -8,7 +8,7 @@ const Food = ({
   position = { a: 0, b: 0 },
   scale = 1,
   color = "#ff0000",
-}: SquareProps): JSX.Element => {
+}: SquareProps): React.JSX.Element => {
   const meshRef = useRef<THREE.Mesh>(null!);
 
   useFrame((_, delta) => {

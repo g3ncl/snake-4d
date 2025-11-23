@@ -75,7 +75,7 @@ const ThemeSwitcher = () => {
     }
   };
 
-  const themeIcons: { [key: string]: JSX.Element } = {
+  const themeIcons: { [key: string]: React.JSX.Element } = {
     light: <Sun size={20} />,
     dark: <Moon size={20} />,
     system: <Laptop size={20} />,

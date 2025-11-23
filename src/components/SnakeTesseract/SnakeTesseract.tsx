@@ -22,14 +22,16 @@ const SnakeTesseract = ({
   scale = 1,
   color = "#00ff00",
   rotation = { xy: 0, xw: 0, xz: 0, yw: 0, yz: 0, zw: 0 },
-}: SnakeTesseractProps): JSX.Element => {
+}: SnakeTesseractProps): React.JSX.Element => {
   const linesRef = useRef<THREE.Group>(new THREE.Group());
   const projectedPositions = useRef<THREE.Vector3[]>([]);
-  
+
   // Shared resources
   const sharedGeometry = useRef(new THREE.BufferGeometry());
   const material = useRef(new THREE.LineBasicMaterial({ color: color }));
-  const headMaterial = useRef(new THREE.LineBasicMaterial({ color: "#ffff00" }));
+  const headMaterial = useRef(
+    new THREE.LineBasicMaterial({ color: "#ffff00" }),
+  );
 
   useEffect(() => {
     material.current.color.set(color);
@@ -98,7 +100,9 @@ const SnakeTesseract = ({
         linesRef.current.add(line);
       }
 
-      const lineSegment = linesRef.current.children[index] as THREE.LineSegments;
+      const lineSegment = linesRef.current.children[
+        index
+      ] as THREE.LineSegments;
 
       // Ensure it's using the shared geometry (in case logic drifted, though it shouldn't)
       if (lineSegment.geometry !== sharedGeometry.current) {
@@ -117,10 +121,14 @@ const SnakeTesseract = ({
     });
 
     // 3. Hide excess children
-    // Instead of removing/disposing, we just hide them to pool objects. 
+    // Instead of removing/disposing, we just hide them to pool objects.
     // This reduces GC overhead.
-    for (let i = positions.current.length; i < linesRef.current.children.length; i++) {
-        linesRef.current.children[i].visible = false;
+    for (
+      let i = positions.current.length;
+      i < linesRef.current.children.length;
+      i++
+    ) {
+      linesRef.current.children[i].visible = false;
     }
   });
 

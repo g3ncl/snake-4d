@@ -1,7 +1,8 @@
+import React from "react";
 import styles from "./page.module.css";
 import Game from "@/components/Game/Game";
 
-const Home = (): JSX.Element => {
+const Home = (): React.JSX.Element => {
   return (
     <main className={styles.main}>
       <Game />

@@ -23,7 +23,7 @@ const AngleSlider = ({
   events,
   snapThreshold = 0.1,
   value = 0,
-}: AngleSliderProps): JSX.Element => {
+}: AngleSliderProps): React.JSX.Element => {
   const maxValue = Math.PI * 2;
 
   const snapToClosestGraduation = useCallback(

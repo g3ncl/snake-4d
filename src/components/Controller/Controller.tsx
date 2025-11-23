@@ -7,7 +7,7 @@ const Controller = ({
   handleAction,
   controls,
   touchpad = true,
-}: ControllerProps): JSX.Element => {
+}: ControllerProps): React.JSX.Element => {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {

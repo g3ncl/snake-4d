@@ -14,7 +14,7 @@ const Snake = ({
   axis = { a: "x", b: "y" },
   scale = 1,
   color = "#00ff00",
-}: SnakeProps): JSX.Element => {
+}: SnakeProps): React.JSX.Element => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const bodyColor = React.useMemo(() => new THREE.Color(color), [color]);
 
