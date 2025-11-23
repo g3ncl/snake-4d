@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "Snake 4D",
+    startupImage: ["/assets/splash.jpg"],
   },
   icons: {
     apple: "/assets/icons/icon-192x192.png",
