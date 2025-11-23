@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Snake 4D",
   },
+  icons: {
+    apple: "/assets/icons/icon-192x192.png",
+  },
 };
 
 export const viewport: Viewport = {

@@ -1,13 +1,19 @@
 const CACHE_NAME = "snake-4d-cache-v1";
 const urlsToCache = [
   "/",
-  "/favicon.ico",
-  "/assets/icons/icon-192x192.svg",
-  "/assets/icons/icon-512x512.svg",
+  "/assets/icons/icon-48x48.png",
+  "/assets/icons/icon-72x72.png",
+  "/assets/icons/icon-96x96.png",
+  "/assets/icons/icon-128x128.png",
+  "/assets/icons/icon-144x144.png",
+  "/assets/icons/icon-152x152.png",
+  "/assets/icons/icon-192x192.png",
+  "/assets/icons/icon-256x256.png",
+  "/assets/icons/icon-384x384.png",
+  "/assets/icons/icon-512x512.png",
   "/assets/eating.mp3",
   "/assets/switch-on.mp3",
   "/assets/switch-off.mp3",
-  "/fonts/Iosevka-Regular.woff2",
   // Note: App assets (JS/CSS) are often cached automatically by service workers
   // created by build tools, but for a manual SW, you might need to add them
   // or use a more dynamic caching strategy.
