@@ -13,6 +13,7 @@ import {
 } from "@/utils/rotation";
 import { useFrame } from "@react-three/fiber";
 import { SnakeTesseractProps } from "@/types/props";
+import { COLORS } from "@/config/constants";
 
 const DISTANCE = 40;
 
@@ -30,7 +31,7 @@ const SnakeTesseract = ({
   const sharedGeometry = useRef(new THREE.BufferGeometry());
   const material = useRef(new THREE.LineBasicMaterial({ color: color }));
   const headMaterial = useRef(
-    new THREE.LineBasicMaterial({ color: "#ffff00" }),
+    new THREE.LineBasicMaterial({ color: COLORS.SNAKE.HEAD }),
   );
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 export const COLORS = {
   SNAKE: {
-    HEAD: "#ffff00",
+    HEAD: "#008000",
     BODY: "#00ff00",
   },
   FOOD: "#ff0000",
