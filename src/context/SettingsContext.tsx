@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import AudioEngine from "@/system/AudioEngine";
 
 interface SettingsContextType {
   isSoundEnabled: boolean;
@@ -27,12 +28,19 @@ export const SettingsProvider = ({
     const savedVibration = localStorage.getItem("isVibrationEnabled");
 
     if (savedSound !== null) {
-      setIsSoundEnabled(savedSound === "true");
+      const enabled = savedSound === "true";
+      setIsSoundEnabled(enabled);
+      AudioEngine.getInstance().setMuted(!enabled); // Mute if disabled
     }
     if (savedVibration !== null) {
       setIsVibrationEnabled(savedVibration === "true");
     }
   }, []);
+
+  // Sync with AudioEngine whenever isSoundEnabled changes
+  useEffect(() => {
+    AudioEngine.getInstance().setMuted(!isSoundEnabled);
+  }, [isSoundEnabled]);
 
   const toggleSound = () => {
     const newValue = !isSoundEnabled;

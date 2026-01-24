@@ -2,6 +2,7 @@
 import path from "path";
 const nextConfig = {
   output: 'export',
+  productionBrowserSourceMaps: true,
   trailingSlash: true,
   images: {
     unoptimized: true,

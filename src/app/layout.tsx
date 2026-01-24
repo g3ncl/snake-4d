@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import ClientThemeProvider from "@/components/ClientThemeProvider/ClientThemeProvider";
 import { SettingsProvider } from "@/context/SettingsContext";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar";
+import AudioUnlocker from "@/components/AudioManager/AudioUnlocker";
 
 import "./globals.scss";
 import localFont from "next/font/local";
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className={iosevka.className}>
         <SettingsProvider>
           <ClientThemeProvider enableSystem defaultTheme="system">
+            <AudioUnlocker />
             {children}
           </ClientThemeProvider>
         </SettingsProvider>
