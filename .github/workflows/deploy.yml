@@ -2,7 +2,7 @@ name: Deploy to S3
 
 on:
   push:
-    branches: [feature/static]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
