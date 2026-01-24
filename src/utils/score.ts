@@ -6,7 +6,11 @@
  * @return {Promise<any>} A Promise that resolves to the JSON response from the server.
  */
 const sendScore = async (userId: string, score: number, messageId: string) => {
-  const response = await fetch("/api/update-score", {
+  const apiUrl = process.env.NEXT_PUBLIC_SCORE_API_URL;
+  if (!apiUrl) {
+    throw new Error("Score API URL not configured");
+  }
+  const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
