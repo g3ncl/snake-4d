@@ -342,6 +342,10 @@ const Game = (): React.JSX.Element => {
             To eat food in 4D space, your head must align with the food in{" "}
             <b>BOTH</b> boxes (XY & ZW), meaning all 4 axes.
           </p>
+          <p>
+            Semi-transparent segments are on a different depth — you can safely
+            pass through them.
+          </p>
           <DialogButton onClick={closeTutorial}>Start Game</DialogButton>
         </Dialog>
         <Dialog open={gameOver}>
