@@ -72,7 +72,7 @@ const Game = (): React.JSX.Element => {
   const playEatingSound = useSound("/assets/eating.mp3");
   const { isSoundEnabled, isVibrationEnabled } = useSettings();
 
-  const { isFromTelegram, telegramUserId, telegramMessageId } =
+  const { isFromTelegram, telegramUserId, telegramMessageParams } =
     useTelegramCheck();
 
   const [controllerType, setControllerType] =
@@ -186,9 +186,9 @@ const Game = (): React.JSX.Element => {
   useEffect(() => {
     if (!gameOver) return;
 
-    if (telegramUserId && telegramMessageId) {
+    if (telegramUserId && telegramMessageParams) {
       try {
-        updateScore(telegramUserId, scoreRef.current, telegramMessageId);
+        updateScore(telegramUserId, scoreRef.current, telegramMessageParams);
       } catch (error) {
         console.error(error);
       }
