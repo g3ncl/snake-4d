@@ -21,6 +21,10 @@ import useSound from "@/hooks/useSound";
 import { useSettings } from "@/context/SettingsContext";
 import { triggerVibration } from "@/utils/vibration";
 import { GAME_SETTINGS } from "@/config/constants";
+import { useAutoPlay } from "@/hooks/useAutoPlay";
+
+const autoPlayEnabled = process.env.NEXT_PUBLIC_AUTOPLAY === "true";
+const immortalMode = process.env.NEXT_PUBLIC_AUTOPLAY_IMMORTAL === "true";
 
 const keyMap: { [key: string]: Direction } = {
   w: { axis: "y", delta: 1 },
@@ -135,8 +139,14 @@ const Game = (): React.JSX.Element => {
     setIsMounted(true);
   }, []);
 
+  // Auto-dismiss tutorial when autoplay is on
+  useEffect(() => {
+    if (autoPlayEnabled && showTutorial) closeTutorial();
+  }, [autoPlayEnabled, showTutorial]);
+
   useEffect(() => {
     if (
+      !immortalMode &&
       snakePositionRef.current
         .slice(1)
         .some((pos) => arePositionsEqual(pos, snakePositionRef.current[0]))
@@ -224,6 +234,19 @@ const Game = (): React.JSX.Element => {
       setDirection(direction);
     }
   };
+
+  useAutoPlay({
+    enabled: autoPlayEnabled,
+    snakePositionRef,
+    foodPositionRef,
+    directionRef,
+    fieldDimension: GAME_SETTINGS.FIELD_DIMENSION,
+    onSetDirection: handleSetDirection,
+    gameOver,
+    onRestart: resetGame,
+    tickRate: GAME_SETTINGS.TICK_RATE,
+  });
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (showTutorial) return;
